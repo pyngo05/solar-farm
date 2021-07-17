@@ -9,7 +9,7 @@ import java.util.List;
 public class SolarPanelFileRepository implements SolarPanelRepository {
 
     private final String filePath;
-    private final String delimiter = "~";
+    private final String delimiter = ",";
 
     public SolarPanelFileRepository(String filePath) {
         this.filePath = filePath;
@@ -18,63 +18,50 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     //TODO CONT HERE
 
     @Override
-    public List<Memory> findAll() throws DataAccessException {
-        ArrayList<Memory> result = new ArrayList<>();
+    public List<SolarPanel> findAll() throws XDataAccessException {
+        ArrayList<SolarPanel> result = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                Memory m = lineToMemory(line);
-                if (m != null) {
-                    result.add(m);
+                SolarPanel panel = lineToPanel(line);
+                if (panel != null) {
+                    result.add(panel);
                 }
             }
         } catch (FileNotFoundException ex) {
-            // If the file doesn't exist, no big deal.
-            // We'll create it when we add a new memory.
-            // No file just means no memories yet.
+            // If the file doesn't exist, it is created when a new panel is added.
         } catch (IOException ex) {
-            throw new DataAccessException("Could not open the file path: " + filePath, ex);
+            throw new XDataAccessException("Could not open the file path: " + filePath, ex);
         }
         return result;
     }
 
     @Override
-    public Memory findById(int memoryId) throws DataAccessException {
-        List<Memory> all = findAll();
-        for (Memory memory : all) {
-            if (memory.getId() == memoryId) {
-                return memory;
+    public SolarPanel findBySection(String section) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
+        for (SolarPanel panel : all) {
+            if (panel.getId() == panel.id) {
+                return panel;
             }
         }
         return null;
     }
 
     @Override
-    public List<Memory> findShareable(boolean shareable) throws DataAccessException {
-        ArrayList<Memory> result = new ArrayList<>();
-        for (Memory memory : findAll()) {
-            if (memory.isShareable() == shareable) {
-                result.add(memory);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Memory add(Memory memory) throws DataAccessException {
-        List<Memory> all = findAll();
+    public SolarPanel add(SolarPanel panel) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
         int nextId = getNextId(all);
-        memory.setId(nextId);
-        all.add(memory);
+        panel.setId(nextId);
+        all.add(panel);
         writeToFile(all);
-        return memory;
+        return panel;
     }
 
     @Override
-    public boolean update(Memory memory) throws DataAccessException {
-        List<Memory> all = findAll();
+    public boolean update(SolarPanel panel) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
         for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).getId() == memory.getId()) {
-                all.set(i, memory);
+            if (all.get(i).getId() == panel.getId()) {
+                all.set(i, panel);
                 writeToFile(all);
                 return true;
             }
@@ -83,8 +70,8 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     }
 
     @Override
-    public boolean deleteById(int memoryId) throws DataAccessException {
-        List<Memory> all = findAll();
+    public boolean deleteById(int memoryId) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
         for (int i = 0; i < all.size(); i++) {
             if (all.get(i).getId() == memoryId) {
                 all.remove(i);
@@ -95,34 +82,25 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         return false;
     }
 
-    private int getNextId(List<Memory> memories) {
-        int maxId = 0;
-        for (Memory memory : memories) {
-            if (maxId < memory.getId()) {
-                maxId = memory.getId();
+    @Override
+    public List<SolarPanel> findIsTracking(boolean tracking) throws XDataAccessException {
+        ArrayList<SolarPanel> result = new ArrayList<>();
+        for (SolarPanel panel : findAll()) {
+            if (panel.isTracking() == tracking) {
+                result.add(panel);
             }
         }
-        return maxId + 1;
+        return result;
     }
 
-    private void writeToFile(List<Memory> memories) throws DataAccessException {
-        try (PrintWriter writer = new PrintWriter(filePath)) {
-            for (Memory memory : memories) {
-                writer.println(memoryToLine(memory));
-            }
-        } catch (IOException ex) {
-            throw new DataAccessException("Could not write to file path: " + filePath, ex);
-        }
-    }
-
-    private Memory lineToMemory(String line) {
+    private SolarPanel lineToPanel(String line) {
         String[] fields = line.split(delimiter);
 
-        if (fields.length != 4) {
+        if (fields.length != 6) {
             return null;
         }
 
-        return new Memory(
+        return new SolarPanel(
                 Integer.parseInt(fields[0]),
                 fields[1],
                 fields[2],
@@ -130,19 +108,26 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         );
     }
 
-    private String memoryToLine(Memory memory) {
+    private String panelToLine(SolarPanel panel) {
         StringBuilder buffer = new StringBuilder(100);
-        buffer.append(memory.getId()).append(delimiter);
-        buffer.append(cleanField(memory.getFrom())).append(delimiter);
-        buffer.append(cleanField(memory.getContent())).append(delimiter);
-        buffer.append(memory.isShareable());
+        buffer.append(panel.getId()).append(delimiter);
+        buffer.append(cleanField(panel.getFrom())).append(delimiter);
+        buffer.append(cleanField(panel.getContent())).append(delimiter);
+        buffer.append(panel.isShareable());
         return buffer.toString();
     }
 
+    private void writeToFile(List<SolarPanel> panel) throws XDataAccessException {
+        try (PrintWriter writer = new PrintWriter(filePath)) {
+            for (SolarPanel panel : panel) {
+                writer.println(panelToLine(panel));
+            }
+        } catch (IOException ex) {
+            throw new XDataAccessException("Could not write to file path: " + filePath, ex);
+        }
+    }
+
     private String cleanField(String field) {
-        // If the file delimiter, a carriage return, or a newline was written to the file,
-        // it would ruin our ability to read the memory.
-        // Here, we ensure those characters don't end up in the file.
         return field.replace(delimiter, "")
                 .replace("/r", "")
                 .replace("/n", "");
