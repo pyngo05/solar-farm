@@ -38,7 +38,7 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     }
 
     @Override
-    public boolean findBySection(String section) throws XDataAccessException {
+    public List<SolarPanel> findBySection(String section) throws XDataAccessException {
         List<SolarPanel> all = findAll();
         List<SolarPanel> matchingSection = new ArrayList<SolarPanel>();
         for (SolarPanel panel : all) {

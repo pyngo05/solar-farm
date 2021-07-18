@@ -4,23 +4,28 @@ import learn.solarfarm.data.SolarPanelRepository;
 import learn.solarfarm.data.XDataAccessException;
 import learn.solarfarm.data.SolarPanelRepository;
 import learn.solarfarm.models.SolarPanel;
+
 import java.util.List;
 
 // Rules for the SolarPanel model
 public class SolarPanelService {
 
-        private final SolarPanelRepository repository;
+    private final SolarPanelRepository repository;
 
-        public SolarPanelService(SolarPanelRepository repository) {
-            this.repository = (SolarPanelRepository) repository;
-        }
+    public SolarPanelService(SolarPanelRepository repository) {
+        this.repository = repository;
+    }
 
     public SolarPanelResult findBySection(String section) throws XDataAccessException {
         SolarPanelResult result = new SolarPanelResult();
-        if (!repository.findBySection(section)) {
-            String message = String.format("Section %s was not found.", section);
-            result.addErrorMessage(message);
+
+        if (section.isEmpty()) {
+            result.setErrorMessage("Section must not be empty.");
+        } else {
+            List<SolarPanel> panelsWithMatchingSection = repository.findBySection(section);
+            result.setPanels(panelsWithMatchingSection);
         }
+
         return result;
     }
 

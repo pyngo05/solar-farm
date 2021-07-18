@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SolarPanelFileRepositoryTest {
 
-    static final String SEED_FILE_PATH = "./data/solarpanel-seed.txt";
-    static final String TEST_FILE_PATH = "./data/solarpanel-test.txt";
+    static final String SEED_FILE_PATH = "./data/dataaccess-testdata.txt";
+    static final String TEST_FILE_PATH = "./data/dataaccess-testdata-copy.txt";
 
     SolarPanelFileRepository repository = new SolarPanelFileRepository(TEST_FILE_PATH);
 
