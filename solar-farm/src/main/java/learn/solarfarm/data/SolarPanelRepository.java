@@ -8,13 +8,13 @@ public interface SolarPanelRepository {
 
     List<SolarPanel> findAll() throws XDataAccessException;
 
-    SolarPanel findBySection(String section) throws XDataAccessException;
+    boolean findBySection(String section) throws XDataAccessException;
 
-    List<SolarPanel> findIsTracking(boolean isTracking) throws XDataAccessException;
-
-    SolarPanel add(SolarPanel panel) throws XDataAccessException;
-
-    boolean update(SolarPanel panel) throws XDataAccessException;
-
-    boolean deleteById(int panelId) throws XDataAccessException;
+//    List<SolarPanel> findIsTracking(boolean isTracking) throws XDataAccessException;
+//
+//    SolarPanel add(SolarPanel panel) throws XDataAccessException;
+//
+//    boolean update(SolarPanel panel) throws XDataAccessException;
+//
+//    boolean deleteById(int panelId) throws XDataAccessException;
 }

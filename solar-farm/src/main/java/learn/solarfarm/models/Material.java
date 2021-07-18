@@ -7,3 +7,4 @@ public enum Material {
     CdTe,
     CIGS
 }
+
