@@ -1,4 +1,4 @@
-package learn.solarfarm.data.ui;
+package learn.solarfarm.ui;
 
 public interface TextIO {
 

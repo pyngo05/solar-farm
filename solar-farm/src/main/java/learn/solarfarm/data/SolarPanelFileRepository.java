@@ -49,15 +49,40 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         return matchingSection;
     }
 
+//    private String cleanField(String field) {
+//        return field.replace(delimiter, "")
+//                .replace("/r", "")
+//                .replace("/n", "");
+//    }
+//
+//    private String panelToLine(SolarPanel panel) {
+//        StringBuilder buffer = new StringBuilder(100);
+//        buffer.append(panel.getId()).append(delimiter);
+//        buffer.append(cleanField(panel.getFrom())).append(delimiter);
+//        buffer.append(cleanField(panel.getContent())).append(delimiter);
+//        buffer.append(panel.isTracking());
+//        return buffer.toString();
+//    }
+//
+//    private void writeToFile(List<SolarPanel> panel) throws XDataAccessException {
+//        try (PrintWriter writer = new PrintWriter(filePath)) {
+//            for (SolarPanel panel : panel) {
+//                writer.println(panelToLine(panel));
+//            }
+//        } catch (IOException ex) {
+//            throw new XDataAccessException("Could not write to file path: " + filePath, ex);
+//        }
+//    }
+//
 //    @Override
-//    public SolarPanel add(SolarPanel panel) throws XDataAccessException {
+//    public List<SolarPanel> add(SolarPanel panel) throws XDataAccessException {
 //        List<SolarPanel> all = findAll();
-//        int nextId = getNextId(all);
-//        panel.setId(nextId);
+//        UUID id = UUID.randomUUID();
 //        all.add(panel);
 //        writeToFile(all);
-//        return panel;
+//        return (List<SolarPanel>) panel;
 //    }
+
 //
 //    @Override
 //    public boolean update(SolarPanel panel) throws XDataAccessException {
@@ -113,29 +138,4 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
                 Boolean.parseBoolean(fields[6])
         );
     }
-
-//    private String panelToLine(SolarPanel panel) {
-//        StringBuilder buffer = new StringBuilder(100);
-//        buffer.append(panel.getId()).append(delimiter);
-//        buffer.append(cleanField(panel.getFrom())).append(delimiter);
-//        buffer.append(cleanField(panel.getContent())).append(delimiter);
-//        buffer.append(panel.isShareable());
-//        return buffer.toString();
-//    }
-//
-//    private void writeToFile(List<SolarPanel> panel) throws XDataAccessException {
-//        try (PrintWriter writer = new PrintWriter(filePath)) {
-//            for (SolarPanel panel : panel) {
-//                writer.println(panelToLine(panel));
-//            }
-//        } catch (IOException ex) {
-//            throw new XDataAccessException("Could not write to file path: " + filePath, ex);
-//        }
-//    }
-//
-//    private String cleanField(String field) {
-//        return field.replace(delimiter, "")
-//                .replace("/r", "")
-//                .replace("/n", "");
-//    }
 }

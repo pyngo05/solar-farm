@@ -36,4 +36,9 @@ public class SolarPanelDoubleRepository implements SolarPanelRepository {
         return matchingSection;
     }
 
+//    @Override
+//    public List<SolarPanel> add(SolarPanel panel) throws XDataAccessException {
+//        return null;
+//    }
+
 }
