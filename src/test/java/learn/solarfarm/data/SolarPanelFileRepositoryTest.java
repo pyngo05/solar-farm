@@ -1,5 +1,6 @@
 package learn.solarfarm.data;
 
+import learn.solarfarm.models.Material;
 import learn.solarfarm.models.SolarPanel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,35 +53,27 @@ class SolarPanelFileRepositoryTest {
         assertEquals(0, actual.size());
     }
 
-//    @Test
-//    void add() throws XDataAccessException {
-//        SolarPanel panel = new SolarPanel();
-//        panel.setFrom("A Friend");
-//        panel.setContent("A special memory.");
-//
-//        SolarPanel actual = repository.add(actual);
-//        assertEquals(4, actual.getId());
-//
-//        List<SolarPanel> all = repository.findAll();
+    @Test
+    void add() throws XDataAccessException {
+        SolarPanel panel = new SolarPanel("Dover Farm", 5,
+                6, 2010, Material.monoSi,false);
+
+        SolarPanel actual = repository.add(panel);
+        assertEquals("Dover Farm", actual.getSection());
+
+        List<SolarPanel> all = repository.findAll();
 //        assertEquals(4, all.size());
-//
-//        actual = all.get(3);                        // the newly-added memory
-//        assertEquals(4, actual.getId());
-//        assertEquals("A Friend", actual.getFrom()); // confirm all fields
-//        assertEquals("A special memory.", actual.getContent());
-//        assertFalse(actual.isShareable());
-//    }
+
+        actual = all.get(3);
+        assertEquals(5, actual.getRow());
+        assertEquals(6, actual.getColumn());
+        assertEquals(2010, actual.getYear());
+        assertEquals(2010, actual.getYear());
+        assertEquals(Material.monoSi, actual.getMaterial());
+        assertFalse(actual.isTracking());
+    }
 
 
-//    @Test
-//    void findShareable() throws XDataAccessException {
-//        List<Memory> actual = repository.findShareable(true);
-//        assertEquals(2, actual.size()); // seed data has 2 shareable memories
-//
-//        actual = repository.findShareable(false);
-//        assertEquals(1, actual.size()); // 1 non-shareable memory
-//    }
-//
 //    @Test
 //    void findById() throws XDataAccessException {
 //        Memory memory = repository.findById(2);

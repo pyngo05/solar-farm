@@ -16,7 +16,7 @@ public class View {
         displayHeader("Main Menu");
         io.println("0. Exit");
         io.println("1. Find Panels by Section");
-//        io.println("2. Add a Panel");
+        io.println("2. Add a Panel");
 //        io.println("3. Update a Panel");
 //        io.println("4. Remove a Panel");
         return io.readInt("Choose [0-1]:", 0, 1);
@@ -60,9 +60,9 @@ public class View {
 
     public void displayPanels(List<SolarPanel> panels) {
         if (panels.size() == 0) {
-            displayHeader("No solar panels Found.");
+            displayHeader("No Solar Panels Found.");
         } else {
-            displayHeader("Solar panels:");
+            displayHeader("Solar Panels:");
             for (SolarPanel p : panels) {
                 io.printf("Row: %d, Col: %d, Year: %d, Material: %s, Tracking: %B",
                         p.getRow(), p.getColumn(), p.getYear(), p.getMaterial().toString(), p.isTracking());
@@ -75,10 +75,10 @@ public class View {
         io.println(message);
     }
 
-//    public Memory createMemory() {
-//        displayHeader("Add a Memory");
-//        Memory result = new Memory();
-//        result.setFrom(io.readString("From: "));
+//    public SolarPanel createPanel() {
+//        displayHeader("Add a Panel");
+//        SolarPanel result = new SolarPanel();
+//        result.setSection(io.readString("From: "));
 //        result.setContent(io.readString("Content: "));
 //        result.setShareable(io.readBoolean("Shareable [y/n]: "));
 //        return result;
