@@ -29,7 +29,6 @@ class SolarPanelFileRepositoryTest {
 
         Files.copy(seedPath, testPath, StandardCopyOption.REPLACE_EXISTING);
     }
-
     // Delete the test file that was generated from the seed file.
     @AfterEach
     void cleanupTest() throws IOException {
@@ -37,6 +36,7 @@ class SolarPanelFileRepositoryTest {
 
         Files.delete(testPath);
     }
+
 
     @Test
     void findAll() throws XDataAccessException {
@@ -58,7 +58,7 @@ class SolarPanelFileRepositoryTest {
 
     @Test
     void add() throws XDataAccessException {
-        SolarPanel panel = new SolarPanel("Farm", 5,
+        SolarPanel panel = new SolarPanel(20, "Farm", 5,
                 7, 2017, Material.CIGS, true);
 
         SolarPanel actual = repository.add(panel);
@@ -68,33 +68,40 @@ class SolarPanelFileRepositoryTest {
 
     @Test
     void update() throws XDataAccessException {
-//        SolarPanel panel = repository.findBySection("Farm");
-//        panel.setRow(1);                    // was Uncle Sherwin
-//        panel.setShareable(false);                   // was true
-//        assertTrue(repository.update(panel));
-//
-//        panel = repository.findById(2);
-//        assertNotNull(panel);                        // confirm the memory exists
-//        assertEquals("Sherwin", panel.getFrom());    // confirm the memory was updated
-//        assertFalse(panel.isShareable());
+        SolarPanel panel = new SolarPanel();
+        panel.setId(2);
+        panel.setSection("Farm");
+        panel.setRow(100);
+        panel.setColumn(105);
+        panel.setYear(2020);
+        panel.setMaterial(Material.CdTe);
+        panel.setTracking(false);
+
+        boolean success = repository.update(panel);
+        assertTrue(success);
+
+        SolarPanel actual = repository.findById(2);
+        assertNotNull(actual);
+        assertEquals(2020, actual.getYear());
+        assertEquals(100, actual.getRow());
 
         SolarPanel doesNotExist = new SolarPanel();
-        doesNotExist.setYear(1024);
-        boolean actual = repository.update(doesNotExist);
+        doesNotExist.setId(1024);
+        boolean actual1 = repository.update(doesNotExist);
 //        assertFalse(repository.update(doesNotExist));
-        assertFalse(actual);
+        assertFalse(actual1);
     }
 
-//    @Test
-//    void findById() throws XDataAccessException {
-//        Memory memory = repository.findById(2);
-//        assertNotNull(memory);
-//        assertEquals("Uncle Sherwin", memory.getFrom());
-//        assertTrue(memory.isShareable());
-//
-//        memory = repository.findById(1024);
-//        assertNull(memory); // id 1024 does not exist, expect null
-//    }
+    @Test
+    void findById() throws XDataAccessException {
+        SolarPanel panel = repository.findById(3);
+        assertNotNull(panel);
+        assertEquals("Other Section", panel.getSection());
+        assertTrue(panel.isTracking());
+
+        panel = repository.findById(1024);
+        assertNull(panel); // id 1024 does not exist, expect null
+    }
 //
 //
 //

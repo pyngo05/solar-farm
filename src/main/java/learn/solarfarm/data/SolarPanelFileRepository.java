@@ -48,6 +48,17 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         return matchingSection;
     }
 
+    @Override
+    public SolarPanel findById(int panelId) throws XDataAccessException {
+        for (SolarPanel panel: findAll()) {
+            if (panel.getId() == panelId) {
+                return panel;
+            }
+        }
+        return null;
+    }
+
+
     private String cleanField(String field) {
         return field.replace(delimiter, "")
                 .replace("/r", "")
@@ -139,7 +150,7 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         }
 
         return new SolarPanel(
-                UUID.fromString(fields[0]),
+                Integer.parseInt(fields[0]),
                 fields[1],
                 Integer.parseInt(fields[2]),
                 Integer.parseInt(fields[3]),

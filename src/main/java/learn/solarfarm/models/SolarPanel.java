@@ -5,7 +5,7 @@ import java.util.UUID;
 public class SolarPanel {
 
     // Uniquely identify a panel
-    private UUID id;
+    private int id;
     private String section;
     private int row;
     private int column;
@@ -13,20 +13,20 @@ public class SolarPanel {
     private Material material;
     private boolean isTracking;
 
-    // Constructor for creating a new solar panel
-    public SolarPanel(String section, int row,
-                      int column, int year, Material material, boolean isTracking) {
-        this.id = UUID.randomUUID(); // generate ID
-        this.section = section;
-        this.row = row;
-        this.column = column;
-        this.year = year;
-        this.material = material;
-        this.isTracking = isTracking;
-    }
+//    // Constructor for creating a new solar panel
+//    public SolarPanel(String section, int id, int row,
+//                      int column, int year, Material material, boolean isTracking) {
+//        this.id = id; // generate ID
+//        this.section = section;
+//        this.row = row;
+//        this.column = column;
+//        this.year = year;
+//        this.material = material;
+//        this.isTracking = isTracking;
+//    }
 
     // Constructor for creating an object of an existing solar panel (that already has an ID)
-    public SolarPanel(UUID id, String section, int row,
+    public SolarPanel(int id, String section, int row,
                       int column, int year, Material material, boolean isTracking) {
         this.id = id;
         this.section = section;
@@ -41,7 +41,11 @@ public class SolarPanel {
 
     }
 
-    public UUID getId() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
         return id;
     }
 

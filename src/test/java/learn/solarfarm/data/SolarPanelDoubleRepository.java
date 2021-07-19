@@ -12,11 +12,11 @@ public class SolarPanelDoubleRepository implements SolarPanelRepository {
 
     public SolarPanelDoubleRepository() {
         // create fake data
-        panels.add(new SolarPanel("Section1", 2, 3, 2018,
+        panels.add(new SolarPanel(5, "Section1", 2, 3, 2018,
                 Material.aSi, true));
-        panels.add(new SolarPanel("Section1", 3, 3, 2018,
+        panels.add(new SolarPanel(6, "Section1", 3, 3, 2018,
                 Material.aSi, true));
-        panels.add(new SolarPanel("Section2", 1, 1, 2018,
+        panels.add(new SolarPanel(7, "Section2", 1, 1, 2018,
                 Material.aSi, true));
     }
 
@@ -34,6 +34,11 @@ public class SolarPanelDoubleRepository implements SolarPanelRepository {
             }
         }
         return matchingSection;
+    }
+
+    @Override
+    public SolarPanel findById(int panelId) throws XDataAccessException {
+        return null;
     }
 
     @Override

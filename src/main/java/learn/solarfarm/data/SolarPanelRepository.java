@@ -10,6 +10,8 @@ public interface SolarPanelRepository {
 
     List<SolarPanel> findBySection(String section) throws XDataAccessException;
 
+    SolarPanel findById(int panelId) throws XDataAccessException;
+
      SolarPanel add(SolarPanel panel) throws XDataAccessException;
 
 //    List<SolarPanel> findIsTracking(boolean isTracking) throws XDataAccessException;
