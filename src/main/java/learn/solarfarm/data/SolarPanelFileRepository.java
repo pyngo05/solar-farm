@@ -65,12 +65,25 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
 
     private void writeToFile(List<SolarPanel> panels) throws XDataAccessException {
         try (PrintWriter writer = new PrintWriter(filePath)) {
+            writer.println("id,section,row,column,material,is_tracking"); // TODO DELETE?
             for (SolarPanel panel : panels) {
-                writer.println(panelToLine(panel));
+//                writer.println(panelToLine(panel));
+                writer.println(serialize(panel));
             }
         } catch (IOException ex) {
             throw new XDataAccessException("Could not write to file path: " + filePath, ex);
         }
+    }
+
+    // TODO DELETE?
+    private String serialize(SolarPanel panel) {
+        return String.format("%s, %s, %s, %s, %s, %s",
+                panel.getId(),
+                panel.getSection(),
+                panel.getRow(),
+                panel.getColumn(),
+                panel.getMaterial(),
+                panel.isTracking());
     }
 
     @Override
@@ -81,19 +94,18 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         return panel;
     }
 
-//
-//    @Override
-//    public boolean update(SolarPanel panel) throws XDataAccessException {
-//        List<SolarPanel> all = findAll();
-//        for (int i = 0; i < all.size(); i++) {
-//            if (all.get(i).getId() == panel.getId()) {
-//                all.set(i, panel);
-//                writeToFile(all);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    @Override
+    public boolean update(SolarPanel panel) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
+        for (int i = 0; i < all.size(); i++) {
+            if (all.get(i).getId() == panel.getId()) {
+                all.set(i, panel);
+                writeToFile(all);
+                return true;
+            }
+        }
+        return false;
+    }
 //
 //    @Override
 //    public boolean deleteById(UUID panelId) throws XDataAccessException {

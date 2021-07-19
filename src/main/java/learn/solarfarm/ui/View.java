@@ -16,7 +16,7 @@ public class View {
         displayHeader("Main Menu");
         io.println("0. Exit");
         io.println("1. Find Panels by Section");
-        io.println("2. Add a Panel");
+//        io.println("2. Add a Panel");
 //        io.println("3. Update a Panel");
 //        io.println("4. Remove a Panel");
         return io.readInt("Choose [0-1]:", 0, 1);

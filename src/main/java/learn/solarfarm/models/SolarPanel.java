@@ -37,7 +37,10 @@ public class SolarPanel {
         this.isTracking = isTracking;
     }
 
-    // All fields have getters and setters
+    public SolarPanel() {
+
+    }
+
     public UUID getId() {
         return id;
     }
@@ -73,4 +76,17 @@ public class SolarPanel {
     public Material getMaterial() { return material; }
 
     public void setMaterial(Material material) { this.material = material; }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
 }

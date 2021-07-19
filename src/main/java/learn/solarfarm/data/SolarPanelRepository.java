@@ -14,7 +14,7 @@ public interface SolarPanelRepository {
 
 //    List<SolarPanel> findIsTracking(boolean isTracking) throws XDataAccessException;
 //
-//    boolean update(SolarPanel panel) throws XDataAccessException;
+    boolean update(SolarPanel panel) throws XDataAccessException;
 //
 //    boolean deleteById(int panelId) throws XDataAccessException;
 }

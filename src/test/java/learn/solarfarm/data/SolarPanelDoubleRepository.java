@@ -41,5 +41,10 @@ public class SolarPanelDoubleRepository implements SolarPanelRepository {
         return panel;
     }
 
+    @Override
+    public boolean update(SolarPanel panel) throws XDataAccessException {
+        return false;
+    }
+
 
 }
