@@ -1,6 +1,6 @@
 package learn.solarfarm.models;
 
-import java.util.UUID;
+import learn.solarfarm.domain.SolarPanelResult;
 
 public class SolarPanel {
 
@@ -35,10 +35,6 @@ public class SolarPanel {
         this.year = year;
         this.material = material;
         this.isTracking = isTracking;
-    }
-
-    public SolarPanel() {
-
     }
 
     public void setId(int id) {
@@ -92,5 +88,4 @@ public class SolarPanel {
     public void setColumn(int column) {
         this.column = column;
     }
-
 }

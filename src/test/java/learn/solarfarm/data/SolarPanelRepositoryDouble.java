@@ -6,11 +6,11 @@ import learn.solarfarm.models.SolarPanel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SolarPanelDoubleRepository implements SolarPanelRepository {
+public class SolarPanelRepositoryDouble implements SolarPanelRepository {
 
     private ArrayList<SolarPanel> panels = new ArrayList<>();
 
-    public SolarPanelDoubleRepository() {
+    public SolarPanelRepositoryDouble() {
         // create fake data
         panels.add(new SolarPanel(5, "Section1", 2, 3, 2018,
                 Material.aSi, true));
@@ -38,17 +38,28 @@ public class SolarPanelDoubleRepository implements SolarPanelRepository {
 
     @Override
     public SolarPanel findById(int panelId) throws XDataAccessException {
+        for (SolarPanel p : panels) {
+            if (p.getId() == panelId) {
+            return p;
+        }
+    }
         return null;
     }
 
     @Override
     public SolarPanel add(SolarPanel panel) throws XDataAccessException {
+        panels.add(panel);
         return panel;
     }
 
     @Override
     public boolean update(SolarPanel panel) throws XDataAccessException {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean deleteById(int panelId) throws XDataAccessException {
+        return true;
     }
 
 

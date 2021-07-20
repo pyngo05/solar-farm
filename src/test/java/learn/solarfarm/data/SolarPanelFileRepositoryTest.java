@@ -20,7 +20,7 @@ class SolarPanelFileRepositoryTest {
     static final String SEED_FILE_PATH = "./data/dataaccess-testdata.csv";
     static final String TEST_FILE_PATH = "./data/dataaccess-testdata-copy.csv";
 
-    SolarPanelFileRepository repository = new SolarPanelFileRepository(TEST_FILE_PATH);
+    SolarPanelFileRepository repository;
 
     @BeforeEach
     void setupTest() throws IOException {
@@ -28,15 +28,16 @@ class SolarPanelFileRepositoryTest {
         Path testPath = Paths.get(TEST_FILE_PATH);
 
         Files.copy(seedPath, testPath, StandardCopyOption.REPLACE_EXISTING);
-    }
-    // Delete the test file that was generated from the seed file.
-    @AfterEach
-    void cleanupTest() throws IOException {
-        Path testPath = Paths.get(TEST_FILE_PATH);
 
-        Files.delete(testPath);
+        repository = new SolarPanelFileRepository(TEST_FILE_PATH);
     }
-
+//    // Delete the test file that was generated from the seed file.
+//    @AfterEach
+//    void cleanupTest() throws IOException {
+//        Path testPath = Paths.get(TEST_FILE_PATH);
+//
+//        Files.delete(testPath);
+//    }
 
     @Test
     void findAll() throws XDataAccessException {
@@ -68,14 +69,7 @@ class SolarPanelFileRepositoryTest {
 
     @Test
     void update() throws XDataAccessException {
-        SolarPanel panel = new SolarPanel();
-        panel.setId(2);
-        panel.setSection("Farm");
-        panel.setRow(100);
-        panel.setColumn(105);
-        panel.setYear(2020);
-        panel.setMaterial(Material.CdTe);
-        panel.setTracking(false);
+        SolarPanel panel = new SolarPanel(2, "Farm", 100, 105, 2020, Material.CdTe, false);
 
         boolean success = repository.update(panel);
         assertTrue(success);
@@ -85,11 +79,10 @@ class SolarPanelFileRepositoryTest {
         assertEquals(2020, actual.getYear());
         assertEquals(100, actual.getRow());
 
-        SolarPanel doesNotExist = new SolarPanel();
-        doesNotExist.setId(1024);
-        boolean actual1 = repository.update(doesNotExist);
+        SolarPanel doesNotExist = new SolarPanel(99, "Farm", 100, 105, 2020, Material.CdTe, false);
+        success = repository.update(doesNotExist);
 //        assertFalse(repository.update(doesNotExist));
-        assertFalse(actual1);
+        assertFalse(success);
     }
 
     @Test
@@ -102,16 +95,18 @@ class SolarPanelFileRepositoryTest {
         panel = repository.findById(1024);
         assertNull(panel); // id 1024 does not exist, expect null
     }
-//
-//
-//
-//    @Test
-//    void deleteById() throws XDataAccessException {
-//        int count = repository.findAll().size();
-//        assertTrue(repository.deleteById(1));
-//        assertFalse(repository.deleteById(1024));
-//        //  assertEqual
-//    }
+
+    @Test
+    void deleteById() throws XDataAccessException {
+        boolean actual = repository.deleteById(3);
+        assertTrue(actual);
+
+        SolarPanel panel = repository.findById(3);
+        assertNull(panel);
+
+        actual = repository.deleteById(5);
+        assertFalse(actual);
+    }
 
 }
 

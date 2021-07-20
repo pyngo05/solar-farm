@@ -7,7 +7,6 @@ import learn.solarfarm.models.SolarPanel;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class SolarPanelFileRepository implements SolarPanelRepository {
 
@@ -22,6 +21,7 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     public List<SolarPanel> findAll() throws XDataAccessException {
         ArrayList<SolarPanel> result = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String header = reader.readLine();
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 SolarPanel panel = lineToPanel(line);
                 if (panel != null) {
@@ -50,7 +50,8 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
 
     @Override
     public SolarPanel findById(int panelId) throws XDataAccessException {
-        for (SolarPanel panel: findAll()) {
+        List<SolarPanel> all = findAll();
+        for (SolarPanel panel : all) {
             if (panel.getId() == panelId) {
                 return panel;
             }
@@ -76,9 +77,8 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
 
     private void writeToFile(List<SolarPanel> panels) throws XDataAccessException {
         try (PrintWriter writer = new PrintWriter(filePath)) {
-            writer.println("id,section,row,column,material,is_tracking"); // TODO DELETE?
+            writer.println("id,section,row,column,material,is_tracking");
             for (SolarPanel panel : panels) {
-//                writer.println(panelToLine(panel));
                 writer.println(serialize(panel));
             }
         } catch (IOException ex) {
@@ -88,11 +88,12 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
 
     // TODO DELETE?
     private String serialize(SolarPanel panel) {
-        return String.format("%s, %s, %s, %s, %s, %s",
+        return String.format("%s,%s,%s,%s,%s,%s,%s",
                 panel.getId(),
                 panel.getSection(),
                 panel.getRow(),
                 panel.getColumn(),
+                panel.getYear(),
                 panel.getMaterial(),
                 panel.isTracking());
     }
@@ -117,30 +118,19 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         }
         return false;
     }
-//
-//    @Override
-//    public boolean deleteById(UUID panelId) throws XDataAccessException {
-//        List<SolarPanel> all = findAll();
-//        for (int i = 0; i < all.size(); i++) {
-//            if (all.get(i).getId() == panelId) {
-//                all.remove(i);
-//                writeToFile(all);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public List<SolarPanel> findIsTracking(boolean tracking) throws XDataAccessException {
-//        ArrayList<SolarPanel> result = new ArrayList<>();
-//        for (SolarPanel panel : findAll()) {
-//            if (panel.isTracking() == tracking) {
-//                result.add(panel);
-//            }
-//        }
-//        return result;
-//    }
+
+    @Override
+    public boolean deleteById(int panelId) throws XDataAccessException {
+        List<SolarPanel> all = findAll();
+        for (int i = 0; i < all.size(); i++) {
+            if (all.get(i).getId() == panelId) {
+                all.remove(i);
+                writeToFile(all);
+                return true;
+            }
+        }
+        return false;
+    }
 
     private SolarPanel lineToPanel(String line) {
         String[] fields = line.split(delimiter);

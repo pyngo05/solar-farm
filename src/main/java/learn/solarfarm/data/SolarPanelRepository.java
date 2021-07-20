@@ -12,11 +12,9 @@ public interface SolarPanelRepository {
 
     SolarPanel findById(int panelId) throws XDataAccessException;
 
-     SolarPanel add(SolarPanel panel) throws XDataAccessException;
+    SolarPanel add(SolarPanel panel) throws XDataAccessException;
 
-//    List<SolarPanel> findIsTracking(boolean isTracking) throws XDataAccessException;
-//
     boolean update(SolarPanel panel) throws XDataAccessException;
-//
-//    boolean deleteById(int panelId) throws XDataAccessException;
+
+    boolean deleteById(int panelId) throws XDataAccessException;
 }
