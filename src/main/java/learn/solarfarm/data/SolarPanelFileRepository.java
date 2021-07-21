@@ -102,10 +102,18 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     @Override
     public SolarPanel add(SolarPanel panel) throws XDataAccessException {
         List<SolarPanel> all = findAll();
+
+        // find biggest id and set panel ID to 1 above that
+        int biggestID = 0;
+        for (SolarPanel p : all) {
+            int id = p.getId();
+            if (id > biggestID) {
+                biggestID = id;
+            }
+        }
+        panel.setId(biggestID + 1);
+
         all.add(panel);
-
-
-
         writeToFile(all);
         return panel;
     }

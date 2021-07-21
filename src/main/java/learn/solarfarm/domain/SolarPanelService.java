@@ -105,8 +105,8 @@ public class SolarPanelService {
 
         // check if panel with this section-row-column combination already exists
         result = findPanelBySectionRowColumn(updatedPanel.getSection(), updatedPanel.getRow(), updatedPanel.getColumn());
-        if (result.isSuccess()) {
-            result.setErrorMessage("Panel already exists with that section-row-column combination.");
+        if (result.isSuccess() && panelID != result.getPanel().getId()) {
+            result.setErrorMessage("Another panel already exists with that section-row-column combination.");
             return result;
         }
 
@@ -144,7 +144,7 @@ public class SolarPanelService {
         List<SolarPanel> all = repository.findAll();
         SolarPanelResult result = new SolarPanelResult();
         for (SolarPanel panel : all) {
-            if (panel.getSection() == section && panel.getRow() == row && panel.getColumn() == column) {
+            if (panel.getSection().equals(section) && panel.getRow() == row && panel.getColumn() == column) {
                 result.setPanel(panel);
                 return result;
             }

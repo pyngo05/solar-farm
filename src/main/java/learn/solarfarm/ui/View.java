@@ -1,5 +1,7 @@
 package learn.solarfarm.ui;
 
+import learn.solarfarm.domain.SolarPanelResult;
+import learn.solarfarm.models.Material;
 import learn.solarfarm.models.SolarPanel;
 
 import java.util.ArrayList;
@@ -44,6 +46,15 @@ public class View {
         }
     }
 
+    public void displayResult(SolarPanelResult result) {
+        if (result.isSuccess()) {
+            printHeader("Success!");
+        } else {
+            printHeader("Error!");
+            }
+        }
+
+
     public String readString(String prompt) {
         System.out.print(prompt);
         return console.nextLine();
@@ -60,7 +71,7 @@ public class View {
         return result;
     }
 
-    private int readInt(String prompt) {
+    public int readInt(String prompt) {
         int result = 0;
         boolean isValid = false;
         do {
@@ -89,6 +100,17 @@ public class View {
 
     public void displayError(String error) {
         System.out.println("Error: " + error);
+    }
+
+    public SolarPanel createPanel() {
+        SolarPanel panel = new SolarPanel();
+        panel.setSection(readRequiredString("Section: "));
+        panel.setRow(Integer.parseInt(readRequiredString("Row: ")));
+        panel.setColumn(Integer.parseInt(readRequiredString("Column: ")));
+        panel.setYear(Integer.parseInt(readRequiredString("Year: ")));
+        panel.setMaterial(Material.valueOf(readRequiredString("Material: ")));
+        panel.setTracking(Boolean.parseBoolean(readRequiredString("Tracking [true/false]: ")));
+        return panel;
     }
 
 //    private final TextIO io;
@@ -159,16 +181,6 @@ public class View {
 //        io.println("");
 //        io.println(message);
 //    }
-
-//    public SolarPanel createPanel() {
-//        displayHeader("Add a Panel");
-//        SolarPanel result = new SolarPanel();
-//        result.setSection(io.readString("From: "));
-//        result.setContent(io.readString("Content: "));
-//        result.setShareable(io.readBoolean("Shareable [y/n]: "));
-//        return result;
-//    }
-
 //    public Memory editMemory(Memory m) {
 //        displayHeader("Update");
 //

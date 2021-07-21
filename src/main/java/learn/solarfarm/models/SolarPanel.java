@@ -37,6 +37,10 @@ public class SolarPanel {
         this.isTracking = isTracking;
     }
 
+    public SolarPanel() {
+
+    }
+
     public void setId(int id) {
         this.id = id;
     }

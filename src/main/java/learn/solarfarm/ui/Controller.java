@@ -3,10 +3,12 @@ package learn.solarfarm.ui;
 import learn.solarfarm.data.XDataAccessException;
 import learn.solarfarm.domain.SolarPanelResult;
 import learn.solarfarm.domain.SolarPanelService;
+import learn.solarfarm.models.Material;
 import learn.solarfarm.models.SolarPanel;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 
 public class Controller {
 
@@ -72,16 +74,78 @@ public class Controller {
         view.printSolarPanels(result.getPanels());
     }
 
-    private void createPanel() {
+    private void createPanel() throws XDataAccessException {
         view.printHeader(MenuOption.CREATE_PANELS.getTitle());
+        SolarPanel panel = view.createPanel();
+        SolarPanelResult result = service.add(panel);
+        view.displayResult(result);
     }
 
-    private void updatePanel() {
+    private void updatePanel() throws XDataAccessException {
         view.printHeader(MenuOption.UPDATE_PANELS.getTitle());
+
+        // get fields of panel to update
+        String section = view.readString("Section: ");
+        int r = view.readInt("Row: ");
+        int c = view.readInt("Column: ");
+
+        // find panel
+        SolarPanelResult result = service.findPanelBySectionRowColumn(section, r, c);
+        if (!result.isSuccess()) {
+            view.displayError(result.getErrorMessage());
+            return;
+        }
+        SolarPanel panel = result.getPanel();
+
+        // get updated fields (ints are String to allow user to give empty)
+        System.out.println("\nProvide new values (empty to not update that field):");
+        section = view.readString("Section: ");
+        String row = view.readString("Row: ");
+        String column = view.readString("Column: ");
+        String material = view.readString("Material: ");
+        String year = view.readString("Year: ");
+        String tracking = view.readString("Tracked [y/n]: ");
+
+        // update panel (only fields that user has provided; keep others the same)
+        if (!section.isEmpty()) {
+            panel.setSection(section);
+        }
+        if (!row.isEmpty()) {
+            panel.setRow(Integer.parseInt(row));
+        }
+        if (!column.isEmpty()) {
+            panel.setColumn(Integer.parseInt(column));
+        }
+        if (!material.isEmpty()) {
+            panel.setMaterial(Material.valueOf(material));
+        }
+        if (!year.isEmpty()) {
+            panel.setYear(Integer.parseInt(year));
+        }
+        if (!tracking.isEmpty()) {
+            panel.setTracking(tracking.toLowerCase().equals("y"));
+        }
+        result = service.update(panel.getId(), panel);
+        if (!result.isSuccess()) {
+            view.displayError(result.getErrorMessage());
+            return;
+        }
+
+        System.out.println("\nPanel updated.");
     }
 
-    private void deletePanel() {
+    private void deletePanel() throws XDataAccessException {
         view.printHeader(MenuOption.DELETE_PANELS.getTitle());
+
+        int id = view.readInt("Panel ID: ");
+
+        SolarPanelResult result = service.deleteById(id);
+        if (!result.isSuccess()) {
+            view.displayError(result.getErrorMessage());
+            return;
+        }
+
+        System.out.println("\nPanel deleted.");
     }
 
 //    public void run() {
