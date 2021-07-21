@@ -35,15 +35,21 @@ class SolarPanelServiceTest {
     }
 
     @Test
-    void shouldAddPanel() throws XDataAccessException {
+    void shouldNotAddDuplicatePanel() throws XDataAccessException {
         SolarPanelResult result = service.add(new SolarPanel(5, "Section1", 2, 3, 2018,
                 Material.aSi, true));
-        assertTrue(result.isSuccess());
-
+        assertFalse(result.isSuccess());
     }
 
     @Test
-    void shouldNotAddNullPanel() throws XDataAccessException {
+    void shouldAddPanel() throws XDataAccessException {
+        SolarPanelResult result = service.add(new SolarPanel(8, "Section1", 20, 30, 2018,
+                Material.aSi, true));
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    void shouldNotAddInvalidPanel() throws XDataAccessException {
         SolarPanelResult result = service.add(new SolarPanel(20, "", 251, 250, 2022,
                 Material.CdTe, false));
         assertFalse(result.isSuccess());
@@ -51,18 +57,45 @@ class SolarPanelServiceTest {
     }
 
     @Test
-    void shouldUpdate() throws XDataAccessException {
-        SolarPanelResult result = service.add(new SolarPanel(1, "Section1", 3, 3, 2018,
-                Material.aSi, true));
+    void shouldUpdateExisting() throws XDataAccessException {
+        SolarPanel updatedPanel = new SolarPanel(5, "Farmland", 250, 250, 2020,
+                Material.CdTe, false);
+        SolarPanelResult result = service.update(5, updatedPanel);
+        result.setPanel(updatedPanel);
         assertTrue(result.isSuccess());
     }
 
     @Test
-    void shouldNotUpdate() throws XDataAccessException {
-        SolarPanelResult result = service.add(new SolarPanel(1, "Section1", 255, 3, 2018,
-                Material.aSi, true));
+    void shouldNotUpdateMissing() throws XDataAccessException {
+        SolarPanel updatedPanel = new SolarPanel(100, "Farmland", 250, 250, 2020,
+                Material.CdTe, false);
+        SolarPanelResult result = service.update(100, updatedPanel);
+        result.setPanel(updatedPanel);
         assertFalse(result.isSuccess());
     }
 
 
+    @Test
+    void shouldDeleteById() throws XDataAccessException {
+        SolarPanelResult result = service.deleteById(5);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    void shouldNotDeleteByMissingId() throws XDataAccessException {
+        SolarPanelResult result = service.deleteById(10000000);
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
+    void shouldFindPanelBySectionRowColumn() throws XDataAccessException {
+        SolarPanelResult result = service.findPanelBySectionRowColumn("Section1", 3, 3);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    void shouldNotFindMissingPanelBySectionRowColumn() throws XDataAccessException {
+        SolarPanelResult result = service.findPanelBySectionRowColumn("Section 12", 3, 3);
+        assertFalse(result.isSuccess());
+    }
 }

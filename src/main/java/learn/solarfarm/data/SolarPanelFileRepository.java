@@ -6,6 +6,7 @@ import learn.solarfarm.models.SolarPanel;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SolarPanelFileRepository implements SolarPanelRepository {
@@ -86,7 +87,7 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
         }
     }
 
-    // TODO DELETE?
+
     private String serialize(SolarPanel panel) {
         return String.format("%s,%s,%s,%s,%s,%s,%s",
                 panel.getId(),
@@ -102,6 +103,9 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
     public SolarPanel add(SolarPanel panel) throws XDataAccessException {
         List<SolarPanel> all = findAll();
         all.add(panel);
+
+
+
         writeToFile(all);
         return panel;
     }
@@ -148,5 +152,24 @@ public class SolarPanelFileRepository implements SolarPanelRepository {
                 Material.valueOf(fields[5]),
                 Boolean.parseBoolean(fields[6])
         );
+    }
+
+    // Returns true if all panels in the parameter have a unique section-row-column combination.
+    private boolean validateUniquePanels(List<SolarPanel> panels) {
+        // hash map of all combos
+        HashMap<String, Boolean> panelMap = new HashMap<String, Boolean>();
+
+        // for each panel, put it in hash map. If there is a panel there already then return false
+        for (SolarPanel panel : panels) {
+            String uniqueString = panel.getSection() + "-" + panel.getRow() + "-" + panel.getColumn();
+            boolean panelAlreadyExists = panelMap.get(uniqueString);
+            if (panelAlreadyExists) {
+                return false;
+            } else {
+                panelMap.put(uniqueString, true);
+            }
+        }
+
+        return true;
     }
 }

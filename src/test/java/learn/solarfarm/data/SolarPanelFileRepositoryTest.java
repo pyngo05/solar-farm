@@ -31,13 +31,13 @@ class SolarPanelFileRepositoryTest {
 
         repository = new SolarPanelFileRepository(TEST_FILE_PATH);
     }
-//    // Delete the test file that was generated from the seed file.
-//    @AfterEach
-//    void cleanupTest() throws IOException {
-//        Path testPath = Paths.get(TEST_FILE_PATH);
-//
-//        Files.delete(testPath);
-//    }
+    // Delete the test file that was generated from the seed file.
+    @AfterEach
+    void cleanupTest() throws IOException {
+        Path testPath = Paths.get(TEST_FILE_PATH);
+
+        Files.delete(testPath);
+    }
 
     @Test
     void findAll() throws XDataAccessException {
@@ -81,7 +81,6 @@ class SolarPanelFileRepositoryTest {
 
         SolarPanel doesNotExist = new SolarPanel(99, "Farm", 100, 105, 2020, Material.CdTe, false);
         success = repository.update(doesNotExist);
-//        assertFalse(repository.update(doesNotExist));
         assertFalse(success);
     }
 
@@ -98,14 +97,14 @@ class SolarPanelFileRepositoryTest {
 
     @Test
     void deleteById() throws XDataAccessException {
-        boolean actual = repository.deleteById(3);
-        assertTrue(actual);
+        boolean success = repository.deleteById(3);
+        assertTrue(success);
 
         SolarPanel panel = repository.findById(3);
         assertNull(panel);
 
-        actual = repository.deleteById(5);
-        assertFalse(actual);
+        success = repository.deleteById(5);
+        assertFalse(success);
     }
 
 }

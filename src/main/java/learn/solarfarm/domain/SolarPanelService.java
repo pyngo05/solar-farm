@@ -23,10 +23,11 @@ public class SolarPanelService {
 
         if (section.isEmpty()) {
             result.setErrorMessage("Section must not be empty.");
-        } else {
-            List<SolarPanel> panelsWithMatchingSection = repository.findBySection(section);
-            result.setPanels(panelsWithMatchingSection);
+            return result;
         }
+
+        List<SolarPanel> panelsWithMatchingSection = repository.findBySection(section);
+        result.setPanels(panelsWithMatchingSection);
 
         return result;
     }
@@ -36,18 +37,28 @@ public class SolarPanelService {
         if (!result.isSuccess()) {
             return result;
         }
-        result = validateSolarPanel(panel);
-        if (!result.isSuccess()) {
+
+        // check if panel with this section-row-column combination already exists
+        result = findPanelBySectionRowColumn(panel.getSection(), panel.getRow(), panel.getColumn());
+        if (result.isSuccess()) {
+            result.setErrorMessage("Panel already exists with that section-row-column combination.");
             return result;
         }
+
         SolarPanel p = repository.add(panel);
+        result = new SolarPanelResult();
         result.setPanel(p);
+
         return result;
     }
 
     // Returns true if the panel is valid.
     private SolarPanelResult validateSolarPanel(SolarPanel panel) {
         SolarPanelResult result = new SolarPanelResult();
+
+        if (panel.getId() < 0) {
+            result.setErrorMessage("ID must be greater than 0.");
+        }
 
         if (panel.getSection() == null || panel.getSection().isBlank()) {
             result.setErrorMessage("Section is required.");
@@ -65,37 +76,80 @@ public class SolarPanelService {
             result.setErrorMessage("Year cannot be in the future.");
         }
 
+        // Material and isTracking are implicitly valid due to their types, so don't need more validation.
+
         return result;
     }
 
-    public SolarPanelResult update(SolarPanel panel) throws XDataAccessException {
-        SolarPanelResult result = validateSolarPanel(panel);
+    public SolarPanelResult update(int panelID, SolarPanel updatedPanel) throws XDataAccessException {
+        SolarPanelResult result = new SolarPanelResult();
+
+        // find existing panel
+        SolarPanel existing = repository.findById(panelID);
+        if(existing == null) {
+            result.setErrorMessage("Panel id '" + panelID + "' not found.");
+            return result;
+        }
+
+        // validate new panel info
+        result = validateSolarPanel(updatedPanel);
         if (!result.isSuccess()) {
             return result;
         }
 
-        SolarPanel existing = repository.findById(panel.getId());
-        if(existing == null) {
-            result.setErrorMessage("Panel id " + panel.getId() + " not found.");
+        // ensure ID did not change somehow
+        if (updatedPanel.getId() != panelID) {
+            result.setErrorMessage("Panel id cannot be changed.");
             return result;
         }
 
-        boolean success = repository.update(panel);
+        // check if panel with this section-row-column combination already exists
+        result = findPanelBySectionRowColumn(updatedPanel.getSection(), updatedPanel.getRow(), updatedPanel.getColumn());
+        if (result.isSuccess()) {
+            result.setErrorMessage("Panel already exists with that section-row-column combination.");
+            return result;
+        }
+
+        // update repo
+        boolean success = repository.update(updatedPanel);
+        result = new SolarPanelResult();
         if(!success) {
             result.setErrorMessage("Could not update panel.");
+            return result;
         }
+
         return result;
     }
 
+    public SolarPanelResult deleteById(int panelId) throws XDataAccessException {
+        SolarPanelResult result = new SolarPanelResult();
 
-//        public MemoryResult deleteById(int memoryId) throws XDataAccessException {
-//            MemoryResult result = new MemoryResult();
-//            if (!repository.deleteById(memoryId)) {
-//                String message = String.format("Memory id %s was not found.", memoryId);
-//                result.addErrorMessage(message);
-//            }
-//            return result;
-//        }
-//
-//
+        SolarPanel panel = repository.findById(panelId);
+        if (panel == null) {
+            String message = String.format("Panel id %s was not found.", panelId);
+            result.setErrorMessage(message);
+            return result;
+        }
+
+        boolean success = repository.deleteById(panelId);
+        if (!success) {
+            String message = String.format("Panel id %s failed to delete.", panelId);
+            result.setErrorMessage(message);
+        }
+
+        return result;
+    }
+
+    public SolarPanelResult findPanelBySectionRowColumn(String section, int row, int column) throws XDataAccessException {
+        List<SolarPanel> all = repository.findAll();
+        SolarPanelResult result = new SolarPanelResult();
+        for (SolarPanel panel : all) {
+            if (panel.getSection() == section && panel.getRow() == row && panel.getColumn() == column) {
+                result.setPanel(panel);
+                return result;
+            }
+        }
+        result.setErrorMessage("Panel not found.");
+        return result;
+    }
 }
